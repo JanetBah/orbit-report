@@ -9,9 +9,12 @@ import {Satellite} from './satellite';
 export class AppComponent {
   title = 'orbit-report';
   sourceList: Satellite[];
+  displayList: Satellite[];
+  
 
   constructor() {
     this.sourceList = [];
+    this.displayList = [];
     let satellitesUrl = 'https://handlers.education.launchcode.org/static/satellites.json';
  
     window.fetch(satellitesUrl).then(function(response) {
@@ -23,7 +26,8 @@ export class AppComponent {
             let newSatellite = new Satellite(fetchedSatellites[i].name, fetchedSatellites[i].type, fetchedSatellites[i].launchDate,
               fetchedSatellites[i].orbitType, fetchedSatellites[i].operational);
               
-                this.sourceList.push(newSatellite);  
+                this.sourceList.push(newSatellite); 
+                this.displayList = this.sourceList.slice(0);
           }
           
           
@@ -32,6 +36,29 @@ export class AppComponent {
     }.bind(this));
  
  }
+ search(searchTerm: string): void {
+  let matchingSatellites: Satellite[] = [];
+  searchTerm = searchTerm.toLowerCase();
+  console.log(" search term outside loop: ", searchTerm);
+  for(let i=0; i < this.sourceList.length; i++) {     
+     let name = this.sourceList[i].name.toLowerCase();
+
+     console.log("forLoop name: ", name);
+     console.log("search term: ", searchTerm.valueOf);
+     
+     if (name.indexOf(searchTerm) >= 0) {
+        matchingSatellites.push(this.sourceList[i]);
+
+        console.log("if statement: ", matchingSatellites);
+
+     }
+     
+  }
+  // assign this.displayList to be the the array of matching satellites
+  // this will cause Angular to re-make the table, but now only containing matches
+  this.displayList = matchingSatellites;
+ // console.log("matching sats: ", matchingSatellites);
+}
 
 }
 
